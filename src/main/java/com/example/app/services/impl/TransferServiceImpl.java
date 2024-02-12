@@ -246,7 +246,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public String deleteTransfer(Long id) {
+    public void deleteTransfer(Long id) {
         Transfer transfer = transferRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Transfer not found"));
         transfer.getCashbox().getTransfers().remove(transfer);

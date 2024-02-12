@@ -1,6 +1,5 @@
 package com.example.app.repositories;
 
-import com.example.app.dto.response.transfer.TransferResponse;
 import com.example.app.dto.response.transfer.TransfersResponse;
 import com.example.app.models.Transfer;
 import org.springframework.data.domain.Page;

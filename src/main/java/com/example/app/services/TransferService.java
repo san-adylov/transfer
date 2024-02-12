@@ -15,7 +15,7 @@ public interface TransferService {
 
     void updateTransfer(UpdateTransferRequest request, String userName);
 
-    String deleteTransfer(Long id);
+    void deleteTransfer(Long id);
 
 
 }
