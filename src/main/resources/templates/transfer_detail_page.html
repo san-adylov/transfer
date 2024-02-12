@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Detail</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #247a60;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #206250;
+            color: #ffffff;
+        }
+
+        tr.table-info td {
+            background-color: #FFFFFFFF;
+        }
+
+        tr.table-warning td {
+            background-color: #FFFFFFFF;
+        }
+
+        tr:nth-child(even) {
+            background-color: #FFFFFFFF;
+        }
+    </style>
+</head>
+<body>
+<div class="container" th:object="${transfer}">
+    <h1>Transfer Detail</h1>
+    <table class="table table-bordered table-hover">
+        <tr class="table-info">
+            <th>Sender first name</th>
+            <td th:text="${transfer.senderFirstName}"></td>
+        </tr>
+        <tr class="table-info">
+            <th>Sender last name</th>
+            <td th:text="${transfer.senderLastName}"></td>
+        </tr>
+        <tr class="table-info">
+            <th>Sender surname</th>
+            <td th:text="${transfer.senderSurname}"></td>
+        </tr>
+        <tr class="table-info">
+            <th>Sender Phone Number</th>
+            <td th:text="${transfer.senderPhoneNumber}"></td>
+        </tr>
+        <tr class="table-warning">
+            <th>Recipient firs name</th>
+            <td th:text="${transfer.recipientFirstName}"></td>
+        </tr>
+        <tr class="table-warning">
+            <th>Recipient last name</th>
+            <td th:text="${transfer.recipientLastName}"></td>
+        </tr>
+        <tr class="table-warning">
+            <th>Recipient surname</th>
+            <td th:text="${transfer.recipientSurname}"></td>
+        </tr>
+        <tr class="table-warning">
+            <th>Recipient Phone Number</th>
+            <td th:text="${transfer.recipientPhoneNumber}"></td>
+        </tr>
+        <tr>
+            <th>Sender Cashbox</th>
+            <td th:text="${transfer.senderCashbox}"></td>
+        </tr>
+        <tr>
+            <th>Recipient Cashbox</th>
+            <div th:if="${transfer.recipientCashbox != null}">
+                <td th:text="${transfer.recipientCashbox}"></td>
+            </div>
+        </tr>
+        <tr>
+            <th>Amount</th>
+            <td th:text="${transfer.amountOfMoney}"></td>
+        </tr>
+        <tr>
+            <th>Created Date</th>
+            <td th:text="${transfer.createdAt}"></td>
+        </tr>
+        <tr>
+            <th>Issued Date</th>
+            <div th:if="${transfer.issuedAt != null}">
+                <td th:text="${transfer.issuedAt}"></td>
+            </div>
+        </tr>
+        <tr>
+            <th>Comment</th>
+            <td th:text="${transfer.comment}"></td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>
+                <span th:text="${transfer.status}"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>Currency</th>
+            <td th:text="${transfer.currency}"></td>
+        </tr>
+    </table>
+</div>
+<div th:if="${error}" class="error-message">
+    <h2>Error:</h2>
+    <p th:text="${error}"></p>
+</div>
+</body>
+</html>

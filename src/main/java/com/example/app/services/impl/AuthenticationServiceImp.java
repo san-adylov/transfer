@@ -20,20 +20,20 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private final CashboxRepository cashboxRepository;
     private final PasswordEncoder passwordEncoder;
 
-//    @PostConstruct
-//    private void addAdmin() {
-//        Cashbox cashbox = Cashbox
-//                .builder()
-//
-//                .title("admin")
-//                .role(Role.ADMIN)
-//                .username("Sanzhar")
-//                .password(passwordEncoder.encode("Sanzhar"))
-//                .build();
-//        if (!cashboxRepository.existsCashboxByUsername(cashbox.getUsername())){
-//            cashboxRepository.save(cashbox);
-//        }
-//    }
+    @PostConstruct
+    private void addAdmin() {
+        Cashbox cashbox = Cashbox
+                .builder()
+
+                .title("admin")
+                .role(Role.ADMIN)
+                .username("Sanzhar")
+                .password(passwordEncoder.encode("Sanzhar"))
+                .build();
+        if (!cashboxRepository.existsCashboxByUsername(cashbox.getUsername())){
+            cashboxRepository.save(cashbox);
+        }
+    }
 
     @Override
     public AuthenticationResponse singIn(SignInRequest request) {

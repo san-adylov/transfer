@@ -11,7 +11,7 @@ public interface TransferService {
 
     Page<TransfersResponse> getAllTransfers(String username, int page);
 
-    TransferResponse getTransfer(Long id);
+    TransferResponse getTransfer(String username, Long id);
 
     void updateTransfer(UpdateTransferRequest request, String userName);
 

@@ -30,11 +30,7 @@ public class Transfer {
             CascadeType.REFRESH})
     private Cashbox cashbox;
     @OneToOne(
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.DETACH,
-                    CascadeType.REFRESH},
+            cascade = CascadeType.ALL,
             mappedBy = "transfer"
     )
     private IssueHistory issueHistory;

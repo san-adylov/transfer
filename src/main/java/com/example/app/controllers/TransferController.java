@@ -2,6 +2,7 @@ package com.example.app.controllers;
 
 import com.example.app.dto.request.transfer.CreateTransferRequest;
 import com.example.app.dto.request.transfer.UpdateTransferRequest;
+import com.example.app.dto.response.transfer.TransferResponse;
 import com.example.app.dto.response.transfer.TransfersResponse;
 import com.example.app.exceptions.BadRequestException;
 import com.example.app.exceptions.ForbiddenException;
@@ -38,10 +39,16 @@ public class TransferController {
 
     @GetMapping("/create-transfer")
     public String createTransfer(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        model.addAttribute("userLogin", username);
-        model.addAttribute("request", new CreateTransferRequest());
-        return "create_transfer";
+        try {
+            String username = userDetails.getUsername();
+            model.addAttribute("userLogin", username);
+            model.addAttribute("request", new CreateTransferRequest());
+            return "create_transfer";
+        } catch (NotFoundException | BadRequestException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "redirect:/create-transfer";
+
     }
 
     @PostMapping("/save-transfer")
@@ -55,7 +62,7 @@ public class TransferController {
             model.addAttribute("error", e.getMessage());
             return "create_transfer";
         }
-        return "redirect:/transfer";
+        return "redirect:/transfers";
     }
 
     @GetMapping("/edit-transfer")
@@ -70,16 +77,37 @@ public class TransferController {
             @ModelAttribute("update_transfer") UpdateTransferRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-        transferService.updateTransfer(request, userDetails.getUsername());
-        }catch (NotFoundException | ForbiddenException | BadRequestException e){
+            transferService.updateTransfer(request, userDetails.getUsername());
+            return "redirect:/transfers";
+        } catch (NotFoundException | ForbiddenException | BadRequestException e) {
             model.addAttribute("errorMessage", e.getMessage());
             System.out.println("Error " + e.getMessage());
             return "edit_transfer_page";
         }
-        return "redirect:/transfer";
     }
+
     @GetMapping("/transfer/{id}")
-    public String getTransferById(@PathVariable Long id){
-        return
+    public String getTransferById(
+            Model model,
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+        TransferResponse transfer = transferService.getTransfer(userDetails.getUsername(), id);
+        model.addAttribute("transfer", transfer);
+        return "transfer_detail_page";
+        } catch (BadRequestException | NotFoundException | ForbiddenException e) {
+            model.addAttribute("error", e.getMessage());
+            return "error";
+        }
     }
+
+
+
+    @DeleteMapping("/transfer/{id}")
+    public String deleteTransferById(@PathVariable("id") Long transferId){
+        transferService.deleteTransfer(transferId);
+        return "redirect:/transfers";
+    }
+
+
 }

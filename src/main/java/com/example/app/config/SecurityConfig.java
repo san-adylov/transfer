@@ -9,10 +9,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
@@ -23,12 +26,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(request -> request.requestMatchers("/").permitAll()
+        http.authorizeHttpRequests(request -> request
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/auth/admin").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
-                        .defaultSuccessUrl("/transfers", true)
+                        .successHandler((request, response, authentication) -> {
+                            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+                            if (authorities.stream().anyMatch(r -> r.getAuthority().equals("ADMIN"))) {
+                                response.sendRedirect("/auth/admin");
+                            } else {
+                                response.sendRedirect("/transfers");
+                            }
+                        })
+                        .failureUrl("/login?error=true")
                         .permitAll())
-                .logout(LogoutConfigurer::permitAll);
+                .logout(LogoutConfigurer::permitAll)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedPage("/access-denied"))
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .maximumSessions(1).expiredUrl("/login?expired=true"));
+
         return http.build();
     }
 

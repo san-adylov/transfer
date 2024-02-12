@@ -8,9 +8,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+
 public class TransfersResponse {
     private Long id;
     private String createTransfer;

@@ -6,10 +6,10 @@ import com.example.app.dto.response.transfer.TransferResponse;
 import com.example.app.dto.response.transfer.TransfersResponse;
 import com.example.app.enums.Currency;
 import com.example.app.enums.Status;
+import com.example.app.exceptions.BadRequestException;
 import com.example.app.exceptions.ForbiddenException;
 import com.example.app.exceptions.NotFoundException;
 import com.example.app.models.Cashbox;
-import com.example.app.exceptions.BadRequestException;
 import com.example.app.models.IssueHistory;
 import com.example.app.models.Transfer;
 import com.example.app.repositories.CashboxRepository;
@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -38,6 +39,7 @@ public class TransferServiceImpl implements TransferService {
     private final TransferRepository transferRepository;
     private final CashboxRepository cashRegisterRepository;
     private final IssueHistoryRepository issueHistoryRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void createTransfer(String username, CreateTransferRequest request) {
@@ -140,8 +142,75 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public TransferResponse getTransfer(Long id) {
-        return null;
+    public TransferResponse getTransfer(String username, Long id) {
+        Cashbox cashbox = cashRegisterRepository.getCashRegisterByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Not found with username: %s".formatted(username)));
+        System.out.printf("""
+                Cashbox id %s
+                Transfer id %s
+                %n""", cashbox.getId(), id);
+        boolean b = transferRepository.existsTransferByIdAndCashboxId(id, cashbox.getId());
+        if (!b){
+           throw  new ForbiddenException("У вас нету доступа");
+        }
+//        return issueHistoryRepository.getTransferByIdAndCashboxId(id, cashbox.getId());
+//                .orElseThrow(() -> new ForbiddenException("У вас нету доступа"));
+        return getTransferForTemplate(cashbox.getId(), id);
+    }
+
+    private TransferResponse getTransferForTemplate(Long cashboxId, Long transferId) {
+        String query = """
+                SELECT t.sender_first_name,
+                       t.sender_last_name,
+                       t.sender_surname,
+                       t.sender_phone_number,
+                       t.recipient_first_name,
+                       t.recipient_last_name,
+                       t.recipient_surname,
+                       t.recipient_phone_number,
+                       ih.amount_of_money,
+                       ih.code_number,
+                       ih.created_at,
+                       ih.issue_date,
+                       ih.comment,
+                       ih.status,
+                       ih.currency,
+                       (SELECT c.title
+                        FROM cashboxs c
+                        WHERE c.id = t.cashbox_id) AS sender_bank_title,
+                       (SELECT c.title
+                        FROM cashboxs c
+                        WHERE c.id = ih.cashbox_id) AS issue_bank_title
+                FROM transfers t
+                         JOIN issues_histories ih ON t.id = ih.transfer_id
+                         JOIN cashboxs c ON t.cashbox_id = c.id
+                WHERE t.id = ?
+                  AND t.cashbox_id = ?
+                """;
+
+        return jdbcTemplate.queryForObject(
+                query,
+                (rs, rowNum) -> TransferResponse.builder()
+                        .senderFirstName(rs.getString("sender_first_name"))
+                        .senderLastName(rs.getString("sender_last_name"))
+                        .senderSurname(rs.getString("sender_surname"))
+                        .senderPhoneNumber(rs.getString("sender_phone_number"))
+                        .recipientFirstName(rs.getString("recipient_first_name"))
+                        .recipientLastName(rs.getString("recipient_last_name"))
+                        .recipientSurname(rs.getString("recipient_surname"))
+                        .recipientPhoneNumber(rs.getString("recipient_phone_number"))
+                        .amountOfMoney(rs.getString("amount_of_money"))
+                        .codeNumber(rs.getString("code_number"))
+                        .createdAt(rs.getString("created_at"))
+                        .issuedAt(rs.getString("issue_date"))
+                        .comment(rs.getString("comment"))
+                        .status(rs.getString("status"))
+                        .currency(rs.getString("currency"))
+                        .senderCashbox(rs.getString("sender_bank_title"))
+                        .recipientCashbox(rs.getString("issue_bank_title"))
+                        .build(),
+                transferId, cashboxId
+        );
     }
 
     @Override
@@ -152,6 +221,11 @@ public class TransferServiceImpl implements TransferService {
                 .orElseThrow(() -> new NotFoundException("Transfer not found!"));
         Transfer transfer = transferRepository.getTransfer(request.getCodeNumber())
                 .orElseThrow(() -> new NotFoundException("Transfer not found"));
+        checkRequests(request, transfer, issueHistory);
+        saveUpdates(issueHistory, cashbox, transfer);
+    }
+
+    private void checkRequests(UpdateTransferRequest request, Transfer transfer, IssueHistory issueHistory) {
         if (!transfer.getRecipientFirstName().equals(request.getRecipientFirstName()) &&
                 !transfer.getRecipientLastName().equals(request.getRecipientLastName()) &&
                 !transfer.getRecipientSurname().equals(request.getRecipientSurname()) &&
@@ -159,6 +233,9 @@ public class TransferServiceImpl implements TransferService {
                 !issueHistory.getCodeNumber().equals(request.getCodeNumber())) {
             throw new ForbiddenException("Не правильные данные доступ запрещен");
         }
+    }
+
+    private void saveUpdates(IssueHistory issueHistory, Cashbox cashbox, Transfer transfer) {
         issueHistory.setCashbox(cashbox);
         issueHistory.setStatus(Status.ISSUED);
         issueHistory.setIssueDate(LocalDateTime.now());
@@ -170,6 +247,10 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public String deleteTransfer(Long id) {
+        Transfer transfer = transferRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Transfer not found"));
+        transfer.getCashbox().getTransfers().remove(transfer);
+        transferRepository.deleteById(id);
         return null;
     }
 }

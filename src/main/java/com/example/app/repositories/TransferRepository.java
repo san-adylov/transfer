@@ -1,5 +1,6 @@
 package com.example.app.repositories;
 
+import com.example.app.dto.response.transfer.TransferResponse;
 import com.example.app.dto.response.transfer.TransfersResponse;
 import com.example.app.models.Transfer;
 import org.springframework.data.domain.Page;
@@ -34,4 +35,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
             WHERE ih.codeNumber = ?1
             """)
     Optional<Transfer> getTransfer(String codeNumber);
+
+    boolean existsTransferByIdAndCashboxId(Long transferId, Long cashboxId);
+
 }
