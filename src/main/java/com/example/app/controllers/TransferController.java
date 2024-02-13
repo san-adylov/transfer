@@ -43,7 +43,7 @@ public class TransferController {
             String username = userDetails.getUsername();
             model.addAttribute("userLogin", username);
             model.addAttribute("request", new CreateTransferRequest());
-            return "create_transfer";
+            return "create_transfer_page";
         } catch (NotFoundException | BadRequestException e) {
             model.addAttribute("error", e.getMessage());
         }
@@ -60,7 +60,7 @@ public class TransferController {
             transferService.createTransfer(userDetails.getUsername(), createTransferRequest);
         } catch (BadRequestException | NotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "create_transfer";
+            return "create_transfer_page";
         }
         return "redirect:/transfers";
     }
@@ -97,7 +97,7 @@ public class TransferController {
         return "transfer_detail_page";
         } catch (BadRequestException | NotFoundException | ForbiddenException e) {
             model.addAttribute("error", e.getMessage());
-            return "error";
+            return "error_page";
         }
     }
 

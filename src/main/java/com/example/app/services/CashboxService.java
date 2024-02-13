@@ -8,11 +8,13 @@ public interface CashboxService {
 
     void saveCashbox(CreateCashboxRequest request);
 
-    Page<CashboxResponse> getAllCashbox();
+    Page<CashboxResponse> getAllCashbox(int page);
+
+    CashboxResponse getCashboxById(Long id);
 
     void updateCashbox(CreateCashboxRequest request);
 
-    void deleteCashbox(String username);
+    void deleteCashbox(Long cashboxId);
 
 
 }

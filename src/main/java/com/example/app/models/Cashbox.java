@@ -32,5 +32,12 @@ public class Cashbox {
             CascadeType.REFRESH},
             mappedBy = "cashbox")
     private List<Transfer> transfers;
+    @OneToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH},
+            mappedBy = "cashbox")
+    private List<IssueHistory> issueHistories;
 
 }

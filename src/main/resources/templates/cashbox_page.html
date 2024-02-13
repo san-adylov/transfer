@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cashbox</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        table.sortable-table {
+            max-width: 1500px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table.sortable-table th,
+        table.sortable-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table.sortable-table th {
+            background-color: #1b4d3f;
+            color: #fff;
+            text-align: left;
+        }
+
+        table.sortable-table th a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        table.sortable-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .form-button-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .save-button {
+            background-color: #1b4d3f;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition-duration: 0.4s;
+            gap: 5px;
+        }
+
+        .save-button:hover {
+            background-color: #247a60;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .pagination {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .pagination ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: inline-block;
+        }
+
+        .pagination li {
+            display: inline;
+            margin: 0 5px;
+        }
+
+        .pagination a, .pagination span {
+            color: #333;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #ddd;
+        }
+
+        .pagination .active a {
+            background-color: #206250;
+            color: #fff;
+            border: 1px solid #247a60;
+        }
+
+        .pagination .disabled span {
+            color: #777;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<table th:fragment="sortable-table" class="sortable-table">
+    <thead>
+    <tr>
+        <th><a th:id="dates" th:href="@{'#'}">Title</a></th>
+        <th><a th:id="summa" th:href="@{'#'}">Balance</a></th>
+        <th><a th:id="senderName" th:href="@{'#'}">Number of transactions</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cashbox : ${cashbox}">
+        <td>
+            <form th:action="@{cashbox/{id}(id=${cashbox.id})}" th:method="GET">
+                <button type="submit" th:text="${cashbox.title}">Title</button>
+            </form>
+        </td>
+        <td th:text="${cashbox.balance}">Balance 1</td>
+        <td th:text="${cashbox.numberOfTransactions}">Number of transactions 1</td>
+    </tr>
+    </tbody>
+</table>
+<form th:action="@{cashbox/create}" th:method="GET">
+    <div class="form-button-container">
+        <button type="submit" class="save-button">
+            Создать
+        </button>
+    </div>
+</form>
+<table th:fragment="sortable-table" class="sortable-table">
+
+</table>
+<div th:if="${totalPages > 1}" class="pagination">
+    <ul>
+        <li th:class="${currentPage == 0} ? 'disabled' : ''">
+            <a th:if="${currentPage != 0}" th:href="@{${'transfer?page=' + (currentPage - 1)}}" aria-label="Previous">&laquo;</a>
+            <span th:if="${currentPage == 0}" aria-hidden="true">&laquo;</span>
+        </li>
+        <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+            th:class="${pageNumber == currentPage} ? 'active' : ''">
+            <a th:href="@{${'transfer?page=' + pageNumber}}" th:text="${pageNumber + 1}"></a>
+        </li>
+        <li th:class="${currentPage == totalPages - 1} ? 'disabled' : ''">
+            <a th:if="${currentPage != totalPages - 1}" th:href="@{${'transfer?page=' + (currentPage + 1)}}"
+               aria-label="Next">&raquo;</a>
+            <span th:if="${currentPage == totalPages - 1}" aria-hidden="true">&raquo;</span>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

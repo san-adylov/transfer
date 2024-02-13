@@ -251,6 +251,5 @@ public class TransferServiceImpl implements TransferService {
                 .orElseThrow(() -> new NotFoundException("Transfer not found"));
         transfer.getCashbox().getTransfers().remove(transfer);
         transferRepository.deleteById(id);
-        return null;
     }
 }

@@ -24,7 +24,6 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private void addAdmin() {
         Cashbox cashbox = Cashbox
                 .builder()
-
                 .title("admin")
                 .role(Role.ADMIN)
                 .username("Sanzhar")
