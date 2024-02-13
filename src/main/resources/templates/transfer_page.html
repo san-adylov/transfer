@@ -135,7 +135,7 @@
     <tbody>
     <tr th:each="transfer : ${transfers}">
         <td>
-            <form th:action="@{transfers/transfer/{id}(id=${transfer.id})}" th:method="GET">
+            <form th:action="@{/api/v1/transfers/{id}(id=${transfer.id})}" th:method="GET">
             <button type="submit" th:text="${transfer.createTransfer}">Date 1</button>
             </form>
         </td>
@@ -157,16 +157,13 @@
         </button>
     </div>
 </form>
-<form th:action="@{transfers/edit-transfer}" th:method="GET">
+<form th:action="@{/api/v1/transfers/edit-transfer}" th:method="GET">
     <div class="form-button-container">
         <button type="submit" class="save-button">
             Получить
         </button>
     </div>
 </form>
-<table th:fragment="sortable-table" class="sortable-table">
-
-</table>
 <div th:if="${totalPages > 1}" class="pagination">
     <ul>
         <li th:class="${currentPage == 0} ? 'disabled' : ''">

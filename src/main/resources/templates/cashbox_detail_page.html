@@ -83,29 +83,29 @@
     </style>
 </head>
 <body>
-<form th:action="@{/cashbox/delete{id}(id=${cashbox.getId()})}" method="get">
-    <div class="container" th:object="${cashbox}">
-        <h1>Cashbox Detail</h1>
-        <table class="table table-bordered table-hover">
-            <tr class="table-info">
-                <th>Title</th>
-                <td th:text="${cashbox.title}"></td>
-            </tr>
-            <tr class="table-info">
-                <th>Balance</th>
-                <td th:text="${cashbox.balance}"></td>
-            </tr>
-            <tr class="table-info">
-                <th>Number of transactions</th>
-                <td th:text="${cashbox.numberOfTransactions}"></td>
-            </tr>
-        </table>
+<div class="container" th:object="${cashbox}">
+    <h1>Cashbox Detail</h1>
+    <table class="table table-bordered table-hover">
+        <tr class="table-info">
+            <th>Title</th>
+            <td th:text="${cashbox.title}"></td>
+        </tr>
+        <tr class="table-info">
+            <th>Balance</th>
+            <td th:text="${cashbox.balance}"></td>
+        </tr>
+        <tr class="table-info">
+            <th>Number of transactions</th>
+            <td th:text="${cashbox.numberOfTransactions}"></td>
+        </tr>
+    </table>
+    <form th:action="@{delete/{id}(id=${id})}" method="get" >
         <div class="form-button-container">
             <button type="submit" class="save-button">
                 Удалить
             </button>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 </body>
 </html>

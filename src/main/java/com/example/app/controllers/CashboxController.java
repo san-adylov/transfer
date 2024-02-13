@@ -11,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/cashbox")
+@RequestMapping("/api/v1/cashbox")
 @RequiredArgsConstructor
 public class CashboxController {
 
@@ -29,7 +29,7 @@ public class CashboxController {
             Model model) {
         try {
             cashboxService.saveCashbox(request);
-            return "redirect:/cashbox";
+            return "redirect:/api/v1/cashbox";
         } catch (BadRequestException e) {
             model.addAttribute("error", e.getMessage());
             return "error_page";
@@ -54,13 +54,14 @@ public class CashboxController {
             @PathVariable("id") Long cashboxId,
             Model model) {
         model.addAttribute("cashbox", cashboxService.getCashboxById(cashboxId));
+        model.addAttribute("id", cashboxId);
         return "cashbox_detail_page";
-        
+
     }
 
-    @GetMapping("delete/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteCashboxById(@PathVariable("id") Long cashboxId) {
         cashboxService.deleteCashbox(cashboxId);
-        return "redirect:/cashbox";
+        return "redirect:/api/v1/cashbox";
     }
 }

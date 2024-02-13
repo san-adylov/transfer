@@ -798,6 +798,14 @@
                 <label>Код отправителя</label>
                 <input type="text" placeholder="Код отправителя" required th:field="*{codeNumber}"/>
             </div>
+            <div class="nice-form-group">
+                <label for="currency">Валюта</label>
+                <select id="currency" name="currency" th:field="*{currency}">
+                    <option th:each="currency : ${T(com.example.app.enums.Currency).values()}"
+                            th:value="${currency}"
+                            th:text="${currency.name()}"></option>
+                </select>
+            </div>
         </section>
         <div class="form-button-container">
             <button type="submit" class="save-button">

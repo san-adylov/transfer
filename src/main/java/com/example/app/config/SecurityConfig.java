@@ -9,13 +9,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
@@ -27,16 +28,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(request -> request
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/auth/admin").hasAuthority("ADMIN")
+                        .requestMatchers("/login","/actuator/**").permitAll()
+                        .requestMatchers("/api/v1/cashbox/", "/api/v1/cashbox/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .successHandler((request, response, authentication) -> {
-                            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-                            if (authorities.stream().anyMatch(r -> r.getAuthority().equals("ADMIN"))) {
-                                response.sendRedirect("/auth/admin");
+                            Authentication authentication1 = SecurityContextHolder.getContext().getAuthentication();
+                            UserDetails userDetails = (UserDetails) authentication1.getPrincipal();
+                            String role = userDetails.getAuthorities()
+                                    .stream()
+                                    .findFirst()
+                                    .map(GrantedAuthority::getAuthority)
+                                    .orElse(null);
+                            assert role != null;
+                            if (role.equals("ROLE_ADMIN")) {
+                                response.sendRedirect("/api/v1/cashbox");
                             } else {
-                                response.sendRedirect("/transfers");
+                                response.sendRedirect("/api/v1/transfers");
                             }
                         })
                         .failureUrl("/login?error=true")

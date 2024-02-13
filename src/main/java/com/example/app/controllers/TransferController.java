@@ -10,6 +10,7 @@ import com.example.app.exceptions.NotFoundException;
 import com.example.app.services.TransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/transfers")
+@RequestMapping("/api/v1/transfers")
 @RequiredArgsConstructor
 public class TransferController {
 
@@ -30,7 +31,6 @@ public class TransferController {
             @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         Page<TransfersResponse> transferPage = transferService.getAllTransfers(username, page);
-        model.addAttribute("userLogin", username);
         model.addAttribute("transfers", transferPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", transferPage.getTotalPages());
@@ -62,7 +62,7 @@ public class TransferController {
             model.addAttribute("error", e.getMessage());
             return "create_transfer_page";
         }
-        return "redirect:/transfers";
+        return "redirect:/api/v1/transfers";
     }
 
     @GetMapping("/edit-transfer")
@@ -78,7 +78,7 @@ public class TransferController {
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
             transferService.updateTransfer(request, userDetails.getUsername());
-            return "redirect:/transfers";
+            return "redirect:/api/v1/transfers";
         } catch (NotFoundException | ForbiddenException | BadRequestException e) {
             model.addAttribute("errorMessage", e.getMessage());
             System.out.println("Error " + e.getMessage());
@@ -92,9 +92,9 @@ public class TransferController {
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-        TransferResponse transfer = transferService.getTransfer(userDetails.getUsername(), id);
-        model.addAttribute("transfer", transfer);
-        return "transfer_detail_page";
+            TransferResponse transfer = transferService.getTransfer(userDetails.getUsername(), id);
+            model.addAttribute("transfer", transfer);
+            return "transfer_detail_page";
         } catch (BadRequestException | NotFoundException | ForbiddenException e) {
             model.addAttribute("error", e.getMessage());
             return "error_page";
@@ -102,9 +102,8 @@ public class TransferController {
     }
 
 
-
     @DeleteMapping("/transfer/{id}")
-    public String deleteTransferById(@PathVariable("id") Long transferId){
+    public String deleteTransferById(@PathVariable("id") Long transferId) {
         transferService.deleteTransfer(transferId);
         return "redirect:/transfers";
     }

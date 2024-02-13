@@ -47,8 +47,7 @@ public class TransferServiceImpl implements TransferService {
 
         Cashbox cashRegister = getCashRegisterByUsername(username);
 
-        BigDecimal balanceAmount = balance(request.getAmountOfMoney(), request.getCurrency());
-        validateSufficientFunds(cashRegister.getBalance(), balanceAmount);
+        BigDecimal balanceAmount = salesExchangeRate(request.getAmountOfMoney(), request.getCurrency());
 
         Transfer transfer = buildTransferEntity(cashRegister, request);
         transferRepository.save(transfer);
@@ -70,11 +69,6 @@ public class TransferServiceImpl implements TransferService {
                 .orElseThrow(() -> new NotFoundException("Не найдено"));
     }
 
-    private void validateSufficientFunds(BigDecimal cashRegisterBalance, BigDecimal transferAmount) {
-        if (cashRegisterBalance.compareTo(transferAmount) < 0) {
-            throw new BadRequestException("Недостаточно средств");
-        }
-    }
 
     private Transfer buildTransferEntity(Cashbox cashRegister, CreateTransferRequest request) {
         return Transfer.builder()
@@ -111,11 +105,11 @@ public class TransferServiceImpl implements TransferService {
     }
 
 
-    private BigDecimal balance(int summa, Currency currency) {
+    private BigDecimal salesExchangeRate(int summa, Currency currency) {
         Map<String, Double> currencyConversionMap = new HashMap<>();
         currencyConversionMap.put("KGS", 1.0);
         currencyConversionMap.put("USD", 89.43);
-        currencyConversionMap.put("KZT", 0.20);
+        currencyConversionMap.put("KZT", 5.02);
         currencyConversionMap.put("RUB", 0.98);
 
         double conversionRate = currencyConversionMap.get(currency.name());
@@ -150,8 +144,8 @@ public class TransferServiceImpl implements TransferService {
                 Transfer id %s
                 %n""", cashbox.getId(), id);
         boolean b = transferRepository.existsTransferByIdAndCashboxId(id, cashbox.getId());
-        if (!b){
-           throw  new ForbiddenException("У вас нету доступа");
+        if (!b) {
+            throw new ForbiddenException("У вас нету доступа");
         }
 //        return issueHistoryRepository.getTransferByIdAndCashboxId(id, cashbox.getId());
 //                .orElseThrow(() -> new ForbiddenException("У вас нету доступа"));
@@ -221,8 +215,22 @@ public class TransferServiceImpl implements TransferService {
                 .orElseThrow(() -> new NotFoundException("Transfer not found!"));
         Transfer transfer = transferRepository.getTransfer(request.getCodeNumber())
                 .orElseThrow(() -> new NotFoundException("Transfer not found"));
+        BigDecimal balanceAmount = exchangeRatePurchase(issueHistory.getAmountOfMoney(), request.getCurrency());
         checkRequests(request, transfer, issueHistory);
+        validateSufficientFunds(cashbox.getBalance(), balanceAmount);
         saveUpdates(issueHistory, cashbox, transfer);
+    }
+
+    private BigDecimal exchangeRatePurchase(BigDecimal summa, Currency currency) {
+        Map<String, Double> currencyConversionMap = new HashMap<>();
+        currencyConversionMap.put("KGS", 1.0);
+        currencyConversionMap.put("USD", 0.011);
+        currencyConversionMap.put("KZT", 0.20);
+        currencyConversionMap.put("RUB", 1.02);
+
+        double conversionRate = currencyConversionMap.get(currency.name());
+
+        return summa.multiply(BigDecimal.valueOf(conversionRate));
     }
 
     private void checkRequests(UpdateTransferRequest request, Transfer transfer, IssueHistory issueHistory) {
@@ -232,6 +240,11 @@ public class TransferServiceImpl implements TransferService {
                 !transfer.getRecipientPhoneNumber().equals(request.getRecipientPhoneNumber()) &&
                 !issueHistory.getCodeNumber().equals(request.getCodeNumber())) {
             throw new ForbiddenException("Не правильные данные доступ запрещен");
+        }
+    }
+    private void validateSufficientFunds(BigDecimal cashboxBalance, BigDecimal transferAmount) {
+        if (cashboxBalance.compareTo(transferAmount) < 0) {
+            throw new BadRequestException("Недостаточно средств");
         }
     }
 
