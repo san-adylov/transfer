@@ -22,56 +22,60 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CashboxRepository cashboxRepository;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  private final CashboxRepository cashboxRepository;
 
-        http.authorizeHttpRequests(request -> request
-                        .requestMatchers("/login","/actuator/**").permitAll()
-                        .requestMatchers("/api/v1/cashbox/", "/api/v1/cashbox/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .successHandler((request, response, authentication) -> {
-                            Authentication authentication1 = SecurityContextHolder.getContext().getAuthentication();
-                            UserDetails userDetails = (UserDetails) authentication1.getPrincipal();
-                            String role = userDetails.getAuthorities()
-                                    .stream()
-                                    .findFirst()
-                                    .map(GrantedAuthority::getAuthority)
-                                    .orElse(null);
-                            assert role != null;
-                            if (role.equals("ROLE_ADMIN")) {
-                                response.sendRedirect("/api/v1/cashbox");
-                            } else {
-                                response.sendRedirect("/api/v1/transfers");
-                            }
-                        })
-                        .failureUrl("/login?error=true")
-                        .permitAll())
-                .logout(LogoutConfigurer::permitAll)
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedPage("/access-denied"))
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .maximumSessions(1).expiredUrl("/login?expired=true"));
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.build();
-    }
+    http.authorizeHttpRequests(request -> request
+            .requestMatchers("/login", "/actuator/**").permitAll()
+            .requestMatchers("/api/v1/cashbox/", "/api/v1/cashbox/**").hasRole("ADMIN")
+            .anyRequest().authenticated())
+        .formLogin(form -> form
+            .successHandler((request, response, authentication) -> {
+              Authentication authentication1 = SecurityContextHolder.getContext()
+                  .getAuthentication();
+              UserDetails userDetails = (UserDetails) authentication1.getPrincipal();
+              String role = userDetails.getAuthorities()
+                  .stream()
+                  .findFirst()
+                  .map(GrantedAuthority::getAuthority)
+                  .orElse(null);
+              assert role != null;
+              if (role.equals("ROLE_ADMIN")) {
+                response.sendRedirect("/api/v1/cashbox");
+              } else {
+                response.sendRedirect("/api/v1/transfers");
+              }
+            })
+            .failureUrl("/login?error=true")
+            .permitAll())
+        .logout(LogoutConfigurer::permitAll)
+        .exceptionHandling(exceptionHandling -> exceptionHandling
+            .accessDeniedPage("/access-denied"))
+        .sessionManagement(sessionManagement -> sessionManagement
+            .maximumSessions(1).expiredUrl("/login?expired=true"));
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    return http.build();
+  }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetails(cashboxRepository);
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder.build();
-    }
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return new CustomUserDetails(cashboxRepository);
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+    AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(
+        AuthenticationManagerBuilder.class);
+    authenticationManagerBuilder.userDetailsService(userDetailsService())
+        .passwordEncoder(passwordEncoder());
+    return authenticationManagerBuilder.build();
+  }
 }

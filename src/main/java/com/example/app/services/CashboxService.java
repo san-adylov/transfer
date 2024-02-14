@@ -6,15 +6,15 @@ import org.springframework.data.domain.Page;
 
 public interface CashboxService {
 
-    void saveCashbox(CreateCashboxRequest request);
+  void saveCashbox(CreateCashboxRequest request);
 
-    Page<CashboxResponse> getAllCashbox(int page);
+  Page<CashboxResponse> getAllCashbox(int page);
 
-    CashboxResponse getCashboxById(Long id);
+  CashboxResponse getCashboxById(Long id);
 
-    void updateCashbox(CreateCashboxRequest request);
+  void updateCashbox(CreateCashboxRequest request, Long cashboxId);
 
-    void deleteCashbox(Long cashboxId);
+  void deleteCashboxById(Long cashboxId);
 
 
 }

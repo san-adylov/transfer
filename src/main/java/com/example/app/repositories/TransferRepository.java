@@ -15,17 +15,17 @@ import java.util.Optional;
 public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
     @Query("SELECT NEW com.example.app.dto.response.transfer.TransfersResponse(" +
-            "t.id," +
-            "CONCAT(t.senderFirstName, ' ', t.senderLastName), " +
-            "t.senderPhoneNumber, " +
-            "CONCAT(t.recipientFirstName, ' ', t.recipientLastName), " +
-            "t.recipientPhoneNumber, " +
-            "t.cashbox.id, " +
-            "ih.createdAt," +
-            "ih.amountOfMoney," +
-            "ih.codeNumber" +
-            ") " +
-            "FROM Transfer t JOIN IssueHistory ih ON t.issueHistory.id = ih.id")
+        "t.id," +
+        "CONCAT(t.senderFirstName, ' ', t.senderLastName), " +
+        "t.senderPhoneNumber, " +
+        "CONCAT(t.recipientFirstName, ' ', t.recipientLastName), " +
+        "t.recipientPhoneNumber, " +
+        "t.cashbox.id, " +
+        "ih.createdAt," +
+        "ih.amountOfMoney," +
+        "ih.codeNumber" +
+        ") " +
+        "FROM Transfer t JOIN IssueHistory ih ON t.issueHistory.id = ih.id")
     Page<TransfersResponse> getAllTransfers(Pageable pageable);
 
     @Query("""

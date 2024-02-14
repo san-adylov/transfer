@@ -14,19 +14,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetailsService {
 
-    private final CashboxRepository cashboxRepository;
+  private final CashboxRepository cashboxRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Cashbox cashbox = cashboxRepository.getCashRegisterByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Cashier with username: not found"));
-        if (cashbox == null) {
-            return null;
-        }
-        return User.builder()
-                .username(cashbox.getUsername())
-                .password(cashbox.getPassword())
-                .roles(cashbox.getRole().name())
-                .build();
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    Cashbox cashbox = cashboxRepository.getCashRegisterByUsername(username)
+        .orElseThrow(() -> new NotFoundException("Cashier with username: not found"));
+    if (cashbox == null) {
+      return null;
     }
+    return User.builder()
+        .username(cashbox.getUsername())
+        .password(cashbox.getPassword())
+        .roles(cashbox.getRole().name())
+        .build();
+  }
 }

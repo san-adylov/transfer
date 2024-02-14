@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Error</title>
-    <style>
-        .error-message {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Error</title>
+  <style>
+    .error-message {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
 <div th:if="${error}" class="error-message">
-    <h2>Ошибка:</h2>
-    <p th:text="${error}"></p>
+  <h2>Ошибка:</h2>
+  <p th:text="${error}"></p>
 </div>
 
 </body>

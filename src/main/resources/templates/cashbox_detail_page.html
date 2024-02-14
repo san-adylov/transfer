@@ -1,111 +1,111 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Cashbox detail page</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <title>Cashbox detail page</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-        h1 {
-            color: #247a60;
-        }
+    h1 {
+      color: #247a60;
+    }
 
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+    }
 
-        th {
-            background-color: #206250;
-            color: #ffffff;
-        }
+    th {
+      background-color: #206250;
+      color: #ffffff;
+    }
 
-        tr.table-info td {
-            background-color: #FFFFFFFF;
-        }
+    tr.table-info td {
+      background-color: #FFFFFFFF;
+    }
 
-        tr.table-warning td {
-            background-color: #FFFFFFFF;
-        }
+    tr.table-warning td {
+      background-color: #FFFFFFFF;
+    }
 
-        tr:nth-child(even) {
-            background-color: #FFFFFFFF;
-        }
+    tr:nth-child(even) {
+      background-color: #FFFFFFFF;
+    }
 
-        .form-button-container {
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    .form-button-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .save-button {
-            background-color: #1b4d3f; /* Green */
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: flex;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition-duration: 0.4s;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
+    .save-button {
+      background-color: #1b4d3f; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition-duration: 0.4s;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+    }
 
-        .save-button:hover {
-            background-color: #247a60;
-        }
-    </style>
+    .save-button:hover {
+      background-color: #247a60;
+    }
+  </style>
 </head>
 <body>
 <div class="container" th:object="${cashbox}">
-    <h1>Cashbox Detail</h1>
-    <table class="table table-bordered table-hover">
-        <tr class="table-info">
-            <th>Title</th>
-            <td th:text="${cashbox.title}"></td>
-        </tr>
-        <tr class="table-info">
-            <th>Balance</th>
-            <td th:text="${cashbox.balance}"></td>
-        </tr>
-        <tr class="table-info">
-            <th>Number of transactions</th>
-            <td th:text="${cashbox.numberOfTransactions}"></td>
-        </tr>
-    </table>
-    <form th:action="@{delete/{id}(id=${id})}" method="get" >
-        <div class="form-button-container">
-            <button type="submit" class="save-button">
-                Удалить
-            </button>
-        </div>
-    </form>
+  <h1>Cashbox Detail</h1>
+  <table class="table table-bordered table-hover">
+    <tr class="table-info">
+      <th>Title</th>
+      <td th:text="${cashbox.title}"></td>
+    </tr>
+    <tr class="table-info">
+      <th>Balance</th>
+      <td th:text="${cashbox.balance}"></td>
+    </tr>
+    <tr class="table-info">
+      <th>Number of transactions</th>
+      <td th:text="${cashbox.numberOfTransactions}"></td>
+    </tr>
+  </table>
+  <form th:action="@{delete/{id}(id=${id})}" method="get">
+    <div class="form-button-container">
+      <button type="submit" class="save-button">
+        Удалить
+      </button>
+    </div>
+  </form>
 </div>
 </body>
 </html>

@@ -11,29 +11,29 @@ public interface IssueHistoryRepository extends JpaRepository<IssueHistory, Long
     Optional<IssueHistory> getIssueHistoriesByCodeNumber(String codeNumber);
 
     @Query("""
-            SELECT NEW com.example.app.dto.response.transfer.TransferResponse(
-            t.senderFirstName,
-            t.senderLastName,
-            t.senderSurname,
-            t.senderPhoneNumber,
-            t.recipientFirstName,
-            t.recipientLastName,
-            t.recipientSurname,
-            t.recipientPhoneNumber,
-            i.amountOfMoney,
-            i.codeNumber,
-            i.createdAt,
-            i.issueDate,
-            i.comment,
-            i.status,
-            i.currency,
-            t.cashbox.title,
-            i.cashbox.title)
-            FROM IssueHistory i
-            JOIN i.transfer t
-            WHERE t.id = ?1 AND t.cashbox.id = ?2
-            """)
-    TransferResponse getTransferByIdAndCashboxId(Long transferId, Long cashboxId);
+         SELECT NEW com.example.app.dto.response.transfer.TransferResponse(
+         t.senderFirstName,
+         t.senderLastName,
+         t.senderSurname,
+         t.senderPhoneNumber,
+         t.recipientFirstName,
+         t.recipientLastName,
+         t.recipientSurname,
+         t.recipientPhoneNumber,
+         i.amountOfMoney,
+         i.codeNumber,
+         i.createdAt,
+         i.issueDate,
+         i.comment,
+         i.status,
+         i.currency,
+         t.cashbox.title,
+         i.cashbox.title)
+         FROM IssueHistory i
+         LEFT JOIN i.transfer t
+         WHERE t.id = ?1 AND t.cashbox.id = ?2
+         """)
+    Optional<TransferResponse> getTransferByIdAndCashboxId(Long transferId, Long cashboxId);
 
 
 }

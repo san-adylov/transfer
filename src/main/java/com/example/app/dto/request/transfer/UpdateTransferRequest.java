@@ -1,7 +1,6 @@
 package com.example.app.dto.request.transfer;
 
 import com.example.app.enums.Currency;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,10 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class UpdateTransferRequest {
-    private String recipientFirstName;
-    private String recipientLastName;
-    private String recipientSurname;
-    private String recipientPhoneNumber;
-    private String codeNumber;
-    private Currency currency;
+
+  private String recipientFirstName;
+  private String recipientLastName;
+  private String recipientSurname;
+  private String recipientPhoneNumber;
+  private String codeNumber;
+  private Currency currency;
 }
