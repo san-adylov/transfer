@@ -30,8 +30,8 @@ public interface IssueHistoryRepository extends JpaRepository<IssueHistory, Long
          t.cashbox.title,
          i.cashbox.title)
          FROM IssueHistory i
-         LEFT JOIN i.transfer t
-         WHERE t.id = ?1 AND t.cashbox.id = ?2
+         JOIN i.transfer t
+         WHERE t.id = 1 AND t.cashbox.id = 2
          """)
     Optional<TransferResponse> getTransferByIdAndCashboxId(Long transferId, Long cashboxId);
 

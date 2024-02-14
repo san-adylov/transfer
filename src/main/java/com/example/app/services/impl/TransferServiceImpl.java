@@ -150,7 +150,9 @@ public class TransferServiceImpl implements TransferService {
         Transfer id %s
         %n""", cashbox.getId(), transferId);
     log.info("get transfer by id");
-    return issueHistoryRepository.getTransferByIdAndCashboxId(transferId, cashbox.getId())
+//    TransferResponse transferResponse =  transferRepository.getTransferByIdAndCashboxId(transferId, cashbox.getId());
+//    System.out.println("Bank name " + transferResponse.getRecipientCashbox());
+    return transferRepository.getTransferByIdAndCashboxId(transferId,cashbox.getId())
         .orElseThrow(() -> {
           log.error("You don't have access");
           return new ForbiddenException("У вас нету доступа");

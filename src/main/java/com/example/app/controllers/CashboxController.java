@@ -31,7 +31,7 @@ public class CashboxController {
     return "create_cashbox_page";
   }
 
-  @PostMapping
+  @PostMapping("/save")
   public String saveCashbox(
       @ModelAttribute("cashbox") CreateCashboxRequest request,
       Model model) {
@@ -40,8 +40,8 @@ public class CashboxController {
       log.info("save cashbox controller");
       return "redirect:/api/v1/cashbox";
     } catch (BadRequestException e) {
-      model.addAttribute("error", e.getMessage());
       log.error("error save cashbox controller %s".formatted(e.getMessage()));
+      model.addAttribute("error", e.getMessage());
       return "error_page";
     }
 

@@ -151,22 +151,29 @@
 <div th:if="${totalPages > 1}" class="pagination">
   <ul>
     <li th:class="${currentPage == 0} ? 'disabled' : ''">
-      <a th:if="${currentPage != 0}" th:href="@{${'transfer?page=' + (currentPage - 1)}}"
+      <a th:if="${currentPage != 0}" th:href="@{${'cashbox?page=' + (currentPage - 1)}}"
          aria-label="Previous">&laquo;</a>
       <span th:if="${currentPage == 0}" aria-hidden="true">&laquo;</span>
     </li>
     <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
         th:class="${pageNumber == currentPage} ? 'active' : ''">
-      <a th:href="@{${'transfer?page=' + pageNumber}}" th:text="${pageNumber + 1}"></a>
+      <a th:href="@{${'cashbox?page=' + pageNumber}}" th:text="${pageNumber + 1}"></a>
     </li>
     <li th:class="${currentPage == totalPages - 1} ? 'disabled' : ''">
       <a th:if="${currentPage != totalPages - 1}"
-         th:href="@{${'transfer?page=' + (currentPage + 1)}}"
+         th:href="@{${'cashbox?page=' + (currentPage + 1)}}"
          aria-label="Next">&raquo;</a>
       <span th:if="${currentPage == totalPages - 1}" aria-hidden="true">&raquo;</span>
     </li>
   </ul>
 </div>
+<form th:action="@{/logout}" method="post">
+  <div class="form-button-container">
+    <button type="submit" class="save-button">
+      Выйти
+    </button>
+  </div>
+</form>
 
 </body>
 </html>

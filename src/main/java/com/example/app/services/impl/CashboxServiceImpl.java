@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class CashboxServiceImpl implements CashboxService {
 
   private final CashboxRepository cashboxRepository;
-  private PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public void saveCashbox(CreateCashboxRequest request) {

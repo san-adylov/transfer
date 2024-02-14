@@ -96,24 +96,12 @@
       <td th:text="${transfer.senderCashbox}"></td>
     </tr>
     <tr>
-      <th>Recipient Cashbox</th>
-      <div th:if="${transfer.recipientCashbox != null}">
-        <td th:text="${transfer.recipientCashbox}"></td>
-      </div>
-    </tr>
-    <tr>
       <th>Amount</th>
       <td th:text="${transfer.amountOfMoney}"></td>
     </tr>
     <tr>
       <th>Created Date</th>
       <td th:text="${transfer.createdAt}"></td>
-    </tr>
-    <tr>
-      <th>Issued Date</th>
-      <div th:if="${transfer.issuedAt != null}">
-        <td th:text="${transfer.issuedAt}"></td>
-      </div>
     </tr>
     <tr>
       <th>Comment</th>
